@@ -2,6 +2,7 @@
 #include "ik.hpp"
 #include "vec.hpp"
 #include <cmath>
+#include <iostream>
 
 namespace cordic {
 
@@ -37,44 +38,43 @@ static Vec2 rotate_vec(Vec2 v, uint8_t step, bool ccw) {
     return v + rot;
 }
 
-bfp_t cordic_vectoring_kernel(Vec2& v) {
-    Vec2 original = v;
+static void cordic_vectoring_kernel_vec(Vec2& v) {
     bfp_t K = bfp_t::raw(0x00004e);
-    bfp_t beta{0};
-
-    for(uint8_t i = 0; i <= bfp_t::FRACTION_SHIFT; ++i) {
-        for(uint8_t j = 0; j < 2; ++j) {
-            bool ccw = v.y.is_negative();
-            bfp_t atan = ArctanTable::atan_inv_pow2(i);
-            if(ccw) { atan = -atan; }
-            beta = beta + atan;
-
-            v = rotate_vec(v, i, ccw);
-        }
+    for(uint8_t n = 0; n <= (bfp_t::FRACTION_SHIFT * 2) + 1; ++n) {
+        v = rotate_vec(v, (n >> 1), v.y.is_negative());
     }
-    
     v = v * K;
+}
 
+static bfp_t cordic_vectoring_kernel_angle(Vec2 v) {
+    bfp_t beta = 0;
+    for(uint8_t n = 0; n <= (bfp_t::FRACTION_SHIFT * 2) + 1; ++n) {
+        uint8_t idx = n >> 1;
+        bool ccw = v.y.is_negative();
+        bfp_t atan = ArctanTable::atan_inv_pow2(idx);
+        if(ccw) { atan = -atan; }
+        beta = beta + atan;
+        v = rotate_vec(v, idx, ccw);
+    }
 
-    return beta; 
-
+    return beta;
 }
 
 bfp_t norm(Vec2 v) {
-    cordic_vectoring_kernel(v);
+    cordic_vectoring_kernel_vec(v);
     return v.x;
 }
 
 
 
 bfp_t angle_between(Vec2 from, Vec2 to) {
-    bfp_t beta_from = cordic_vectoring_kernel(from);
-    bfp_t beta_to   = cordic_vectoring_kernel(to);
+    bfp_t beta_from = cordic_vectoring_kernel_angle(from);
+    bfp_t beta_to   = cordic_vectoring_kernel_angle(to);
     return beta_to - beta_from;
 }
 
 bfp_t angle_of(Vec2 v) {
-    return cordic_vectoring_kernel(v);
+    return cordic_vectoring_kernel_angle(v);
 }
 
 
