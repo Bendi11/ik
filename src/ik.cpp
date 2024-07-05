@@ -2,6 +2,12 @@
 #include "cordic.hpp"
 #include <cmath>
 
+static constexpr bfp_t
+        ARM_SEGMENT_OFFSET{20},
+        ARM_SEGMENT_BASE{35},
+        ARM_SEGMENT_FORE{50},
+        ARM_SEGMENT_HAND{30};
+
 Arm::Arm() : _segments{
     Segment(Vec2(0, ARM_SEGMENT_BASE), ARM_SEGMENT_BASE),
     Segment(Vec2(0, ARM_SEGMENT_BASE + ARM_SEGMENT_FORE), ARM_SEGMENT_FORE),

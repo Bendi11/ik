@@ -21,7 +21,7 @@ public:
         bfp_t AngleElevationWrist;
     };
 
-    static inline constexpr const uint8_t SEGMENTS_LEN = 3;
+    static constexpr const uint8_t SEGMENTS_LEN = 3;
 
     Arm();
 
@@ -32,10 +32,4 @@ private:
     Segment _segments[SEGMENTS_LEN];
 
     Vec2 reach(Vec2 from, Vec2 to, bfp_t len);
-
-    static inline constexpr const bfp_t
-        ARM_SEGMENT_OFFSET{20},
-        ARM_SEGMENT_BASE{35},
-        ARM_SEGMENT_FORE{50},
-        ARM_SEGMENT_HAND{30};
 };
