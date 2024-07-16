@@ -40,11 +40,22 @@ static inline Vec2 rotate_vec(Vec2 v, uint8_t step, bool ccw) {
 
 [[gnu::hot]]
 static void cordic_vectoring_kernel_vec(Vec2& v) {
+    static const bfp_t K_TABLE[bfp_t::FRACTION_SHIFT + 1] = {
+        bfp_t::raw(0x000000b5),
+        bfp_t::raw(0x000000e5),
+        bfp_t::raw(0x000000f8),
+        bfp_t::raw(0x000000fe),
+        bfp_t{1},
+        bfp_t{1},
+        bfp_t{1},
+        bfp_t{1},
+        bfp_t{1}
+    };
+
     static constexpr bfp_t K = bfp_t::raw(0x00004e);
     for(uint8_t n = 0; n <= (bfp_t::FRACTION_SHIFT * 2) + 1; ++n) {
-        v = rotate_vec(v, n >> 1, v.y.is_negative());
+        v = rotate_vec(v, n >> 1, v.y.is_negative()) * K_TABLE[n >> 1];
     }
-    v = v * K;
 }
 
 [[gnu::hot]]

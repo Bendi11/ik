@@ -26,10 +26,10 @@ public:
     Arm();
 
     FabrikResult fabrik(bfp_t x, bfp_t y, bfp_t z);
-
+    
+    Segment _segments[SEGMENTS_LEN];
     inline constexpr Segment const& effector(void) const { return _segments[SEGMENTS_LEN - 1]; }
 private:
-    Segment _segments[SEGMENTS_LEN];
 
     Vec2 reach(Vec2 from, Vec2 to, bfp_t len);
 };

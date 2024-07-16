@@ -40,11 +40,19 @@ Arm::FabrikResult Arm::fabrik(bfp_t x, bfp_t y, bfp_t z) {
     Vec2 seg1 = _segments[1].head - _segments[0].head;
     Vec2 seg2 = _segments[2].head - _segments[1].head;
 
+    auto az = cordic::angle_of(Vec2{z, -x});
+    auto el_base = cordic::angle_of(Vec2{_segments[0].head.y, -_segments[0].head.x});
+    auto el_arm  = cordic::angle_of(Vec2{seg1.y, -seg1.x});
+    auto el_wrist = cordic::angle_of(Vec2{seg2.y, -seg2.x});
+
+    el_wrist = el_wrist - el_arm;
+    el_arm = el_arm - el_base;
+
     return FabrikResult {
-        .AngleAzimuth = cordic::angle_of(Vec2{x, z}) - (cordic::PI / bfp_t{2}),
-        .AngleElevationBase = cordic::angle_of(Vec2{_segments[0].head.y, -_segments[0].head.x}),
-        .AngleElevationArm = cordic::angle_between(_segments[0].head, seg1),
-        .AngleElevationWrist = cordic::angle_between(seg1, seg2)
+        .AngleAzimuth = az,
+        .AngleElevationBase = el_base,
+        .AngleElevationArm = el_arm,
+        .AngleElevationWrist = el_wrist,
     };
 }
 

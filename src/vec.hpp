@@ -9,7 +9,7 @@ struct bfp_t {
 
     inline constexpr bfp_t() : _v{0} {}
     inline constexpr bfp_t(int32_t v) : _v{v << FRACTION_SHIFT} {}
-
+    explicit inline constexpr operator int32_t() const { return _v >> FRACTION_SHIFT; }
 
     static inline constexpr bfp_t raw(int32_t v) {
         return bfp_t{v, true};
