@@ -1,17 +1,23 @@
-#include "cordic.hpp"
 #include "ik.hpp"
 #include "vec.hpp"
 #include <cmath>
 #include <iostream>
 
 bfp_t r2d(bfp_t v) {
-    return v * bfp_t{180} / cordic::PI;
+    return v * bfp_t{180} / bfp::PI;
 }
 
 int main(int const _argc, char const *argv[]) {
-    Arm arm{};
+    static constexpr bfp_t
+        ARM_SEGMENT_OFFSET{20},
+        ARM_SEGMENT_BASE{35},
+        ARM_SEGMENT_FORE{50},
+        ARM_SEGMENT_HAND{30};
 
-    auto res = arm.fabrik(bfp_t{50}, bfp_t{50}, bfp_t{20}); 
+
+    Arm arm{ARM_SEGMENT_OFFSET, ARM_SEGMENT_BASE, ARM_SEGMENT_FORE, ARM_SEGMENT_HAND};
+
+    auto res = arm.fabrik(bfp_t{20}, bfp_t{60}, bfp_t{30}); 
     std::cout << 
         "θ azimuth: " << (int32_t)r2d(res.AngleAzimuth) << '\n' <<
         "θ el. base: " << (int32_t)r2d(res.AngleElevationBase) << '\n' <<

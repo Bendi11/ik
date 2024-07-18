@@ -3,7 +3,6 @@
 #include <cmath>
 #include <cstdint>
 
-
 struct bfp_t {
     static constexpr uint8_t FRACTION_SHIFT = 8;
 
@@ -19,6 +18,15 @@ struct bfp_t {
         _v = other._v;
         return *this;
     }
+    
+    inline bfp_t& operator+=(const bfp_t& other) {
+        *this = *this + other;
+        return *this;
+    }
+    inline bfp_t& operator-=(const bfp_t& other) {
+        *this = *this - other;
+        return *this;
+    }
 
     inline constexpr bfp_t operator+(bfp_t const& other) const { return bfp_t::raw(_v + other._v); }
     inline constexpr bfp_t operator-(bfp_t const& other) const { return bfp_t::raw(_v - other._v); }
@@ -29,9 +37,7 @@ struct bfp_t {
     inline constexpr bfp_t operator>>(unsigned const& shift) const { return bfp_t::raw(_v >> shift); }
     inline constexpr bfp_t operator<<(unsigned const& shift) const { return bfp_t::raw(_v << shift); }
 
-    inline constexpr bfp_t operator-() const {
-        return bfp_t::raw(-_v);
-    }
+    inline constexpr bfp_t operator-() const { return bfp_t::raw(-_v); }
 
     inline constexpr bool operator<(bfp_t const& other) const { return _v < other._v; }
     inline constexpr bool operator>(bfp_t const& other) const { return _v > other._v; }
@@ -44,6 +50,11 @@ private:
 
     inline explicit constexpr bfp_t(int32_t v, bool _raw) : _v{v} {}
 };
+
+namespace bfp {
+    static constexpr const bfp_t PI_2 = bfp_t::raw(0x00000192);
+    static constexpr const bfp_t PI   = bfp_t::raw(0x00000324);
+}
 
 struct Vec2 {
     bfp_t x;

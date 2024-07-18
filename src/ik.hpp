@@ -1,6 +1,5 @@
 #include <cmath>
 #include <cstdint>
-
 #include "vec.hpp"
 
 
@@ -23,11 +22,12 @@ public:
 
     static constexpr const uint8_t SEGMENTS_LEN = 3;
 
-    Arm();
+    Arm(bfp_t offset, bfp_t base, bfp_t arm, bfp_t wrist);
 
     FabrikResult fabrik(bfp_t x, bfp_t y, bfp_t z);
     
     Segment _segments[SEGMENTS_LEN];
+    bfp_t _offset;
     inline constexpr Segment const& effector(void) const { return _segments[SEGMENTS_LEN - 1]; }
 private:
 
